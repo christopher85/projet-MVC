@@ -1,9 +1,12 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
+const mongoose = require('mongoose');
+
 
 
 
 const app = express();
+mongoose.connect('mongodb://localhost:27017/blog',{useNewUrlParser: true, useUnifiedTopology: true})
 
 app.use(express.static('public'))
 
