@@ -26,6 +26,7 @@ const contactController = require('./controllers/contactCreate')
 
 const userCreateController = require('./controllers/userCreate')
 const userRegisterController = require('./controllers/userRegister')
+const userLoginController = require('./controllers/userLogin')
 
 const app = express();
 
@@ -33,9 +34,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(fileUploads());
 
-mongoose.connect('mongodb://localhost:27017/blog',{useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect('mongodb://localhost:27017/blog',{useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
 
-const Post = require('./database/models/Article');
+
 const { next } = require('process');
 
 app.use(express.static('public'))
@@ -64,9 +65,12 @@ app.post("/articles/post", articlePostController)
 
 app.get('/user/create', userCreateController)
 app.post('/user/register', userRegisterController)
+app.get("/user/login", userLoginController)
 
 //contact
 app.get("/contact", contactController)
+
+
 
 app.listen(3000 , function() {
     console.log("la page tourne sur le port 3000");
