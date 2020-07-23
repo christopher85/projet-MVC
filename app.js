@@ -7,71 +7,66 @@ MomentHandlebars.registerHelpers(Handlebars);
 const {allowInsecurePrototypeAccess,} = require('@handlebars/allow-prototype-access');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
+const fileUploads = require('express-fileupload');
+const path = require('path');
+
+
  
+//controller//
+//article
 
+const createArticleController = require('./controllers/createArticle')
+const homePageController = require('./controllers/homePage')
+const articleSingleController = require('./controllers/articleSingle')
+const articlePostController = require('./controllers/articlePost')
+const middlewareController = require('./middleware/articleValidPost')
+const contactController = require('./controllers/contactCreate')
 
+//users
 
-
+const userCreateController = require('./controllers/userCreate')
+const userRegisterController = require('./controllers/userRegister')
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(fileUploads());
 
 mongoose.connect('mongodb://localhost:27017/blog',{useNewUrlParser: true, useUnifiedTopology: true})
 
+const Post = require('./database/models/Article');
+const { next } = require('process');
 
 app.use(express.static('public'))
-
 
 app.use(methodOverride("_method"));
 //route
 app.engine('handlebars', exphbs({defaultLayout: 'main',handlebars: allowInsecurePrototypeAccess(Handlebars)}));
 app.set('view engine', 'handlebars');
 
-const Post = require('./database/models/Article')
+//middleware
+
+const middleware = middlewareController
+app.use("/articles/post", middleware)
 
 //get
 
-app.get("/", async (req, res) => {
+app.get("/", homePageController )
 
-    const posts = await Post.find({})
-
-    res.render("index",{posts})
-})
-
-app.get("/contact", (req, res) => {
-    res.render("contact")
-})
 
 //articles
-app.get('/articles/:id', async (req, res)=>{
+app.get('/articles/:id', articleSingleController )
+app.get("/article/add", createArticleController )
+app.post("/articles/post", articlePostController)
 
-    const article = await Post.findById(req.params.id)
+//users
 
-    res.render('articles',{article})
-})
-app.get("/article/add", (req, res) =>{
-    res.render('article/add')
-})
+app.get('/user/create', userCreateController)
+app.post('/user/register', userRegisterController)
 
-//post
-
-app.post("/articles/post", (req, res) =>{
-
-    Post.create(req.body, (error, post)=>{
-        res.redirect('/')
-        
-    })
-    console.log(req.body); 
-
-})
-
-
-
-
-
-
+//contact
+app.get("/contact", contactController)
 
 app.listen(3000 , function() {
     console.log("la page tourne sur le port 3000");
