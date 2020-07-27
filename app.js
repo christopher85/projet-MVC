@@ -12,6 +12,8 @@ const path = require('path');
 const expressSession = require('express-session');
 const MongoStore = require('connect-mongo');
 const FLash = require('connect-flash');
+const {stripTags} = require('./helpers/hbs')
+
 
 
  
@@ -24,6 +26,8 @@ const articleSingleController = require('./controllers/articleSingle')
 const articlePostController = require('./controllers/articlePost')
 const middlewareController = require('./middleware/articleValidPost')
 const contactController = require('./controllers/contactCreate')
+const putUpdateArticleController = require('./controllers/articleUpdate')
+const getUpdateArticleController = require('./controllers/articleGetUpdate')
 
 //users
 
@@ -67,7 +71,13 @@ app.use(methodOverride("_method"));
 
 
 //route
-app.engine('handlebars', exphbs({defaultLayout: 'main',handlebars: allowInsecurePrototypeAccess(Handlebars)}));
+app.engine('handlebars', exphbs({
+    helpers:{
+        stripTags: stripTags
+    },
+    defaultLayout: 'main',
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
+}));
 app.set('view engine', 'handlebars');
 app.use('*', (req, res, next) => {
     res.locals.user = req.session.userId;
@@ -83,10 +93,16 @@ app.use("/article/add", auth)
 
 
 
+
 //articles
 app.get('/articles/:id', articleSingleController );
 app.get("/article/add",   createArticleController );
 app.post("/articles/post",auth , middleware, articlePostController);
+app.get("/put/:id", getUpdateArticleController)
+app.put('/put/:id', putUpdateArticleController);
+
+
+    
 
 //users
 
@@ -95,6 +111,7 @@ app.post('/user/register',redirectAuthSuccess, userRegisterController);
 app.get("/user/login", userLoginController);
 app.post('/user/loginAuth',redirectAuthSuccess, userLoginAuthController);
 app.get('/user/logout', userLogout)
+
 
 //contact
 app.get("/contact", contactController);

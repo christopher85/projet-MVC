@@ -1,6 +1,14 @@
 <section class="section">
-    <div class="container">
-        <h1 class="title">{{article.title}}</h1>
-        <p>{{article.content}}</p>
+    <div class="container" style="display: flex;">
+        <div class="col-md-8">
+            <h1 class="title">{{article.title}}</h1>
+            <p>{{{article.content}}}</p>
+            <img src={{article.image}} alt="">
+        </div>
+        
+        <div class="col-md-4">
+            
+            <button style="border-radius: 10px; border: none; padding: 10px; background: green;"><a href="/put/{{article.id}}" style="color: white;">mise à jour</a></button>
+        </div>
     </div>
 </section>

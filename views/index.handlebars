@@ -46,9 +46,9 @@
                 <div class="content">
                   <a href="/articles/{{_id}}"><h2>{{title}}</h2></a>
                   
-                  <p>{{content}}</p>
+                  <p>{{{content}}}</p>
                   <p>Publié par: {{author}}, le {{momentcreateDate format="DD-MM-YY"}}</p>
-                
+                 <script type="text/javascript" language="javascript"> d = new Date(); document.write(d.toLocaleDateString()); </script>
                 </div>
               </div>
             </div>
